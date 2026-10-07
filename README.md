@@ -15,4 +15,9 @@ https://github.com/Klerith/fernando-skills
 npx skills@latest add Klerith/fernando-skills
 ```
 
-## Hola Mundo
+## Commands
+
+- `npm run dev` — dev server (Turbopack)
+- `npm run build` / `npm run start` — production build / serve
+- `npm run lint` — ESLint 9 flat config (`eslint.config.mjs`)
+- `npx tsc --noEmit` — typecheck (no test runner is configured in this repo)
