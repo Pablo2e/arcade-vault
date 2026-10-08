@@ -1,5 +1,5 @@
-import { Biblioteca } from "@/components/Biblioteca";
+import { Home } from "@/components/Home";
 
-export default function Home() {
-  return <Biblioteca />;
+export default function Page() {
+  return <Home />;
 }
