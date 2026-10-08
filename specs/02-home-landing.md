@@ -1,6 +1,6 @@
 # SPEC 02 — Home landing de `references/templates/home-about`
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-10-08
 > **Objective:** Implementar la home landing de `references/templates/home-about/home.jsx` como raíz `/`, moviendo la biblioteca a `/games` y dejando el about para un spec futuro.
@@ -50,21 +50,21 @@ const TOP = [{ r: 1, p: "NEONFOX", s: 312840 }, /* …5 filas */];
 
 ## Acceptance criteria
 
-- [ ] `/` renderiza la home: hero con "▸ INSERTA UNA MONEDA_", las tres líneas del título, subtítulo y los dos CTAs; las siluetas SVG flotantes están presentes y ocultas para lectores de pantalla (`aria-hidden`).
-- [ ] Las secciones con `reveal` adquieren la clase `in` al entrar en el viewport (threshold ~0.12) y no la pierden al salir.
-- [ ] "▶ EXPLORAR JUEGOS", "VER TODOS LOS JUEGOS →" e "INSERTAR MONEDA →" navegan a `/games`.
-- [ ] "✦ CREAR CUENTA" y "EMPEZAR GRATIS →" navegan a `/auth`; "VER SALÓN →" navega a `/salon`.
-- [ ] El mini-rail muestra los 6 primeros juegos de `GAMES` (`lib/data.ts`) con título y categoría; cada card navega a `/juego/[id]`.
-- [ ] Las secciones 01–04 y el CTA final muestran el mismo contenido textual que la plantilla (4 features, 3 stats, 7 filas de ticker, 5 filas de top, plan único con 6 ítems, 3 FAQs).
-- [ ] `/games` muestra la biblioteca con el mismo comportamiento que antes (buscador, chips, grilla, "NO HAY RESULTADOS").
-- [ ] Tras iniciar sesión o entrar como invitado desde `/auth`, la navegación llega a `/games`.
-- [ ] "VOLVER AL VAULT" (detalle y reproductor) y "VOLVER A LA BIBLIOTECA" (salón) navegan a `/games`.
-- [ ] El Nav muestra Inicio · Biblioteca · Salón y el botón de sesión; el logo lleva a `/`; "Inicio" está activa solo en `/` y "Biblioteca" en `/games`, `/juego/*` y `/jugar/*`; el panel móvil repite los mismos links.
-- [ ] No hay link "Acerca de" en el Nav.
-- [ ] El footer "© 2026 ARCADE VAULT · HECHO CON PIXELES Y NEÓN · v2.6.0" aparece en `/` y en `/games`.
-- [ ] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
-- [ ] `/` y `/games` cargan sin errores en la consola del navegador.
-- [ ] `specs/01-mvp-pantallas-vault.md` ya no afirma que la biblioteca vive en `/`.
+- [x] `/` renderiza la home: hero con "▸ INSERTA UNA MONEDA_", las tres líneas del título, subtítulo y los dos CTAs; las siluetas SVG flotantes están presentes y ocultas para lectores de pantalla (`aria-hidden`).
+- [x] Las secciones con `reveal` adquieren la clase `in` al entrar en el viewport (threshold ~0.12) y no la pierden al salir.
+- [x] "▶ EXPLORAR JUEGOS", "VER TODOS LOS JUEGOS →" e "INSERTAR MONEDA →" navegan a `/games`.
+- [x] "✦ CREAR CUENTA" y "EMPEZAR GRATIS →" navegan a `/auth`; "VER SALÓN →" navega a `/salon`.
+- [x] El mini-rail muestra los 6 primeros juegos de `GAMES` (`lib/data.ts`) con título y categoría; cada card navega a `/juego/[id]`.
+- [x] Las secciones 01–04 y el CTA final muestran el mismo contenido textual que la plantilla (4 features, 3 stats, 7 filas de ticker, 5 filas de top, plan único con 6 ítems, 3 FAQs).
+- [x] `/games` muestra la biblioteca con el mismo comportamiento que antes (buscador, chips, grilla, "NO HAY RESULTADOS").
+- [x] Tras iniciar sesión o entrar como invitado desde `/auth`, la navegación llega a `/games`.
+- [x] "VOLVER AL VAULT" (detalle y reproductor) y "VOLVER A LA BIBLIOTECA" (salón) navegan a `/games`.
+- [x] El Nav muestra Inicio · Biblioteca · Salón y el botón de sesión; el logo lleva a `/`; "Inicio" está activa solo en `/` y "Biblioteca" en `/games`, `/juego/*` y `/jugar/*`; el panel móvil repite los mismos links.
+- [x] No hay link "Acerca de" en el Nav.
+- [x] El footer "© 2026 ARCADE VAULT · HECHO CON PIXELES Y NEÓN · v2.6.0" aparece en `/` y en `/games`.
+- [x] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
+- [x] `/` y `/games` cargan sin errores en la consola del navegador.
+- [x] `specs/01-mvp-pantallas-vault.md` ya no afirma que la biblioteca vive en `/`.
 
 ## Decisions
 
