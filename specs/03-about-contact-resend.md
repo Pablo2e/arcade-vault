@@ -1,6 +1,6 @@
 # SPEC 03 — About page y contacto real con Resend
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02
 > **Date:** 2026-10-08
 > **Objective:** Implementar la ruta `/sobre-nosotros` con el formulario de contacto de `references/templates/home-about/about.jsx` y enviar el mensaje por correo vía Resend desde un route handler.
@@ -63,23 +63,23 @@ Correo saliente (texto plano): `subject: "Arcade Vault — Mensaje de {name}"`, 
 
 ## Acceptance criteria
 
-- [ ] `/sobre-nosotros` renderiza el hero (`▸ ACERCA DE`, "ACERCA DE ARCADE VAULT", misión), los 3 highlights (HEART / BROWSER / PLANT) y el divider de 24 píxeles.
-- [ ] El contenido textual de `/sobre-nosotros` es idéntico a `about.jsx` (misión, highlights, tips, placeholders).
-- [ ] Las secciones con `reveal` de `/sobre-nosotros` adquieren la clase `in` al entrar en el viewport y no la pierden al salir.
-- [ ] Enviar con algún campo vacío muestra el `shake` de 400 ms y no hace `fetch`.
-- [ ] Enviar con datos válidos hace POST a `/api/contact` y muestra la terminal de éxito solo tras una respuesta 2xx, con el nombre en mayúsculas.
-- [ ] Durante el envío el botón está deshabilitado y muestra "▶ ENVIANDO…"; no se puede enviar dos veces en paralelo.
-- [ ] Si el endpoint devuelve 4xx/5xx, se muestra la terminal de error con la misma estética VAULT-OS y el botón REINTENTAR reintenta el envío.
-- [ ] "ENVIAR OTRO MENSAJE" limpia `sent`/`error` y vacía el formulario.
-- [ ] `POST /api/contact` con campos vacíos o correo con formato inválido responde 400 sin llamar a Resend.
-- [ ] `POST /api/contact` con `website` relleno responde 200 sin enviar correo (honeypot).
-- [ ] Con el formulario válido, el correo llega a `CONTACT_TO_EMAIL` con `replyTo` del remitente y asunto "Arcade Vault — Mensaje de {name}".
-- [ ] Falta alguna de las tres env vars → el endpoint responde 500 y el cliente muestra la terminal de error (nunca un crash ni un éxito falso).
-- [ ] `.env.template` documenta `RESEND_API_KEY`, `CONTACT_TO_EMAIL` y `FROM_EMAIL` sin valores reales; `.env.local` no está en el repo.
-- [ ] El Nav muestra Inicio · Biblioteca · Salón · Sobre Nosotros en escritorio y en el panel móvil; "Sobre Nosotros" está activo solo en `/sobre-nosotros`.
-- [ ] `specs/02-home-landing.md` ya no afirma que no hay link "Acerca de".
-- [ ] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
-- [ ] `/sobre-nosotros` carga sin errores en la consola del navegador.
+- [x] `/sobre-nosotros` renderiza el hero (`▸ ACERCA DE`, "ACERCA DE ARCADE VAULT", misión), los 3 highlights (HEART / BROWSER / PLANT) y el divider de 24 píxeles.
+- [x] El contenido textual de `/sobre-nosotros` es idéntico a `about.jsx` (misión, highlights, tips, placeholders).
+- [x] Las secciones con `reveal` de `/sobre-nosotros` adquieren la clase `in` al entrar en el viewport y no la pierden al salir.
+- [x] Enviar con algún campo vacío muestra el `shake` de 400 ms y no hace `fetch`.
+- [x] Enviar con datos válidos hace POST a `/api/contact` y muestra la terminal de éxito solo tras una respuesta 2xx, con el nombre en mayúsculas.
+- [x] Durante el envío el botón está deshabilitado y muestra "▶ ENVIANDO…"; no se puede enviar dos veces en paralelo.
+- [x] Si el endpoint devuelve 4xx/5xx, se muestra la terminal de error con la misma estética VAULT-OS y el botón REINTENTAR reintenta el envío.
+- [x] "ENVIAR OTRO MENSAJE" limpia `sent`/`error` y vacía el formulario.
+- [x] `POST /api/contact` con campos vacíos o correo con formato inválido responde 400 sin llamar a Resend.
+- [x] `POST /api/contact` con `website` relleno responde 200 sin enviar correo (honeypot).
+- [x] Con el formulario válido, el correo llega a `CONTACT_TO_EMAIL` con `replyTo` del remitente y asunto "Arcade Vault — Mensaje de {name}".
+- [x] Falta alguna de las tres env vars → el endpoint responde 500 y el cliente muestra la terminal de error (nunca un crash ni un éxito falso).
+- [x] `.env.template` documenta `RESEND_API_KEY`, `CONTACT_TO_EMAIL` y `FROM_EMAIL` sin valores reales; `.env.local` no está en el repo.
+- [x] El Nav muestra Inicio · Biblioteca · Salón · Sobre Nosotros en escritorio y en el panel móvil; "Sobre Nosotros" está activo solo en `/sobre-nosotros`.
+- [x] `specs/02-home-landing.md` ya no afirma que no hay link "Acerca de".
+- [x] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
+- [x] `/sobre-nosotros` carga sin errores en la consola del navegador.
 
 ## Decisions
 

@@ -3,7 +3,7 @@
 > **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-10-08
-> **Objective:** Implementar la home landing de `references/templates/home-about/home.jsx` como raíz `/`, moviendo la biblioteca a `/games` y dejando el about para un spec futuro.
+> **Objective:** Implementar la home landing de `references/templates/home-about/home.jsx` como raíz `/`, moviendo la biblioteca a `/games` y delegando el about a SPEC 03.
 
 ## Por qué existe este spec
 
@@ -24,7 +24,7 @@ SPEC 01 portó cinco pantallas y dejó la biblioteca en `/`. La plantilla `home-
 
 **Out of scope (for future specs):**
 
-- About (`about.jsx`: misión, highlights, formulario de contacto) y el link "Acerca de" del Nav. El link se agregará en el spec del about, cuando exista `/about` (hoy daría 404).
+- About (`about.jsx`): misión, highlights, formulario de contacto y el link "Sobre Nosotros" del Nav → **resueltos por [SPEC 03](03-about-contact-resend.md)**.
 - Datos dinámicos de "ACTIVIDAD EN VIVO": derivar el ticker o el top de `av_scores`/`seededScores` en lugar de los literales.
 - Juegos jugables, autenticación real, backend o API, puntuaciones en servidor (hereda la exclusión de SPEC 01).
 - Tests automatizados.
@@ -60,7 +60,7 @@ const TOP = [{ r: 1, p: "NEONFOX", s: 312840 }, /* …5 filas */];
 - [x] Tras iniciar sesión o entrar como invitado desde `/auth`, la navegación llega a `/games`.
 - [x] "VOLVER AL VAULT" (detalle y reproductor) y "VOLVER A LA BIBLIOTECA" (salón) navegan a `/games`.
 - [x] El Nav muestra Inicio · Biblioteca · Salón y el botón de sesión; el logo lleva a `/`; "Inicio" está activa solo en `/` y "Biblioteca" en `/games`, `/juego/*` y `/jugar/*`; el panel móvil repite los mismos links.
-- [x] No hay link "Acerca de" en el Nav.
+- [x] No hay link "Acerca de" en el Nav. *(Resuelto por SPEC 03: el link "Sobre Nosotros" → `/sobre-nosotros`.)*
 - [x] El footer "© 2026 ARCADE VAULT · HECHO CON PIXELES Y NEÓN · v2.6.0" aparece en `/` y en `/games`.
 - [x] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
 - [x] `/` y `/games` cargan sin errores en la consola del navegador.
@@ -69,7 +69,7 @@ const TOP = [{ r: 1, p: "NEONFOX", s: 312840 }, /* …5 filas */];
 ## Decisions
 
 - **Sí:** `/` = home y biblioteca → `/games` (ajuste del usuario sobre la opción inicial `/biblioteca`). La raíz y el logo coinciden con la plantilla; los deep-links de la biblioteca quedan en una ruta explícita.
-- **No:** link "Acerca de" en este spec. Decisión del usuario: el about va en su propio spec y el link se agrega cuando `/about` exista, para no publicar un 404.
+- **No:** link "Acerca de" en este spec. Decisión del usuario: el about va en su propio spec y el link se agrega cuando `/about` exista, para no publicar un 404. *(SPEC 03 lo resuelve después con el link "Sobre Nosotros" → `/sobre-nosotros`.)*
 - **No:** página placeholder en `/about`. Adelantaría trabajo del spec del about.
 - **Sí:** literales hardcodeados en "ACTIVIDAD EN VIVO", como la plantilla. Derivarlos de `av_scores`/`seededScores` es alcance extra con valor dudoso para una landing.
 - **Sí:** portar solo las clases que `home.jsx` usa a `globals.css`, no volcar el `styles.css` completo (1744 líneas incluyen `about-*`, `contact-*` y clases de otros componentes ajenos como `gp-*`/`dp-*`).
@@ -89,7 +89,7 @@ const TOP = [{ r: 1, p: "NEONFOX", s: 312840 }, /* …5 filas */];
 
 ## What is **not** in this spec
 
-- About (`about.jsx`) y link "Acerca de" en el Nav — spec futuro, con `/about`.
+- About (`about.jsx`) en este spec → **resuelto por [SPEC 03](03-about-contact-resend.md)**.
 - "ACTIVIDAD EN VIVO" alimentada por puntuaciones reales.
 - Juegos jugables, autenticación real, backend, tests automatizados.
 - Cambios en el layout, el footer o las fuentes.
