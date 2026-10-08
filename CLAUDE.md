@@ -1,10 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project
 
-Arcade Vault: a platform for playing online and competing for the most points (README.md). Scaffolded from create-next-app — `app/` still contains only the default layout and home page, so application features are largely greenfield.
+Arcade Vault: a platform for playing online and competing for the most points (README.md).
 
 ## This is NOT the Next.js you know
 
@@ -12,11 +10,9 @@ The repo pins `next@16.4.0`, which has breaking changes relative to earlier vers
 
 ## Stack and architecture
 
-- **App Router** — routes live in `app/` (`layout.tsx`, `page.tsx` so far). Layouts and pages type their props with the globally available `LayoutProps<'/'>` / `PageProps` helpers instead of imported types.
+- **App Router** — Layouts and pages type their props with the globally available `LayoutProps<'/'>` / `PageProps` helpers instead of imported types.
 - **Caching** — `cacheComponents: true` in `next.config.ts` enables Next 16's new caching model (alongside `partialPrefetching`). Read `node_modules/next/dist/docs/01-app/01-getting-started/08-caching.md` before writing data fetching or anything cache-related; the classic caching behavior is not the default here.
 - **Tailwind CSS v4** — no `tailwind.config.*`; styling is CSS-first via `@import "tailwindcss"` and `@theme` in `app/globals.css`, wired into Turbopack through the `turbopack.rules` entry in `next.config.ts`.
-- **TypeScript** — strict mode; `@/*` path alias resolves to the repo root. React 19.3.
-- **Lint** — ESLint flat config combining `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript`.
 
 ## Spec Driven Design workflow
 
