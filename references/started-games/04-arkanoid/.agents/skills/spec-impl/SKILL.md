@@ -3,7 +3,7 @@ name: spec-impl
 description: Implements an approved spec. Validates that the state means "Approved" (in any language), creates a git branch named after the spec, switches to it, and starts the implementation step by step with pauses to review diffs.
 disable-model-invocation: true
 argument-hint: <NN-spec-name>
-allowed-tools: Read, Glob, Grep, Edit, Write, AskUserQuestion, Bash(git status:*), Bash(git branch:*), Bash(git checkout:*), Bash(git log:*), Bash(git diff:*), Bash(git stash:*), Bash(cat:*), Bash(ls:*)
+allowed-tools: Bash(git status:*), Bash(git branch:*), Bash(git checkout:*), Bash(cat:*), Bash(ls:*)
 ---
 
 # /spec-impl — Implementer of approved specs
@@ -18,9 +18,6 @@ Current branch:
 
 Specs available in this folder:
 !`ls specs/ 2>/dev/null || echo "The specs/ folder does not exist"`
-
-Branch-creation config:
-!`cat specs/.spec-config.yml 2>/dev/null || echo "AutoCreateBranch: true (default, no config file)"`
 
 ---
 
@@ -50,7 +47,8 @@ If `$ARGUMENTS` has a value:
 
 ### Phase 2 — Validate the spec's state
 
-Read the spec file you located in Phase 1 using the Read tool or `cat`.
+Read the file of the spec you found:
+!`cat specs/$ARGUMENTS.md 2>/dev/null || echo "FILE_NOT_FOUND"`
 
 In the file's contents, look for the line that contains the spec's state. The header label is typically `**Status:**` (English) or `**Estado:**` (Spanish), but it may use any language. Match by position (status line near the top of the spec) and by the surrounding state machine, not by the exact label.
 
@@ -103,50 +101,24 @@ Do not offer alternatives, do not suggest "I can still start if you want". The b
 
 Once you have confirmed the state means `Approved`:
 
-0. **Check the working tree first.** Look at the `git status --short` output in the session context above. If it is **not empty**, stop and show the pending changes, then ask:
-
-   ```
-   ⚠️ There are uncommitted changes in the working tree.
-   Switching branches would carry them over. What do you want to do?
-     1. Commit or stash them yourself, then re-run this command  (recommended)
-     2. Continue anyway — the changes travel to the new branch
-   ```
-
-   Wait for the answer. **Do not stash or commit on the user's behalf** unless they explicitly ask for it. If the working tree is clean, skip straight to step 1 without mentioning it.
-
 1. Derive the branch name from the spec file's full name, without the extension. Format: `spec-NN-slug`. Examples:
 
    - `01-mvp-arkanoid.md` → branch `spec-01-mvp-arkanoid`
    - `02-powerups.md` → branch `spec-02-powerups`
 
-2. Read the `AutoCreateBranch` flag from the **Branch-creation config** shown in the session context above.
+2. Check whether the branch already exists:
 
-   - If the config file does not exist, the value is missing, or the value is unrecognized → treat it as `true` (the default).
-   - Only an explicit `false` (in any capitalization) disables automatic branch creation.
-
-   **If `AutoCreateBranch` is `true` (default):** proceed without asking.
-
-   - If the branch **does not exist**: create it with `git checkout -b spec-NN-slug`.
-   - If it **already exists**: this means previous work is being resumed. Switch to it, read `git log --oneline` on the branch, and tell the user which steps of the plan already look done and which step you propose to resume from. Wait for confirmation on the resume point before implementing anything.
+   - If it **does not exist**: create it with `git checkout -b spec-NN-slug`.
+   - If it **already exists**: inform the user that the branch already existed (it may mean previous work is being resumed).
    - In both cases: switch to the branch with `git checkout spec-NN-slug` and confirm the change was successful before continuing.
 
-   **If `AutoCreateBranch` is `false`:** ask before touching git. Show:
-
-   ```
-   AutoCreateBranch is set to false.
-   Create and switch to the branch spec-NN-slug? [y/N]
-   ```
-
-   - If the user answers **yes**: create/switch to the branch exactly as in the `true` case above.
-   - If the user answers **no** or leaves it empty: **do not create any branch.** Tell the user you will implement on the current branch (the one shown in the session context above) and ask for explicit confirmation to continue there. Do not improvise — wait for the answer.
-
-3. Visually confirm to the user the spec is ready and which branch is active:
+3. Visually confirm to the user that the branch was created and that you are on it:
 
    ```
    ✅ Ready to implement.
 
    Spec:   specs/NN-slug.md
-   Branch: spec-NN-slug  (active)   (← or the current branch, if no new branch was created)
+   Branch: spec-NN-slug  (active)
    State:  Approved   (← echo back the actual value found in the spec)
    ```
 
@@ -174,8 +146,6 @@ Shall we start with Step 1?
 Wait for explicit confirmation ("yes", "go ahead", "go", or equivalent). Do not start without it.
 
 Once confirmed, follow these rules during the entire implementation:
-
-**Never commit automatically.** Not per step, not at the end. You write the code and show the diff; committing is the user's decision and the user's command. Only commit if they explicitly ask you to.
 
 **One rule above all:** implement what the spec says. If something in the spec looks suboptimal to you, mention it as an observation but implement what was agreed. Changes to the spec go into the spec, not into the code by surprise.
 
@@ -215,7 +185,7 @@ in your repo's language) and make the final commit before merging this branch.
 ## Summary of expected behavior
 
 ```
-/spec-impl 01-mvp-arkanoid
+/impl-spec 01-mvp-arkanoid
 
   Phase 1  →  Finds specs/01-mvp-arkanoid.md
   Phase 2  →  Reads the state → "Approved" (or "Aprobado", etc.) → ✅ continues
@@ -224,12 +194,10 @@ in your repo's language) and make the final commit before merging this branch.
   Phase 4  →  Implements step by step with pauses
               Ends by reminding to verify the acceptance criteria
 
-/spec-impl 02-powerups  (state: Draft / Borrador)
+/impl-spec 02-powerups  (state: Draft / Borrador)
 
   Phase 1  →  Finds specs/02-powerups.md
   Phase 2  →  Reads the state → "Draft" → ❌ stops
               Shows the standard error message
               Does not create branch, does not touch code
 ```
-
-**Branch creation is controlled by the `AutoCreateBranch` flag** in `specs/.spec-config.yml`. It defaults to `true` (create the branch automatically, as shown above). Set it to `false` to make Phase 3 ask `[y/N]` before creating the branch.
