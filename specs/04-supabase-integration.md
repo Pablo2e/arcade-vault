@@ -1,6 +1,6 @@
 # SPEC 04 — Integración base de Supabase
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 03
 > **Date:** 2026-10-10
 > **Objective:** Integrar Supabase en Arcade Vault con clientes de navegador y servidor, variables de entorno documentadas y un endpoint de salud que verifique la conexión, sin consumirlos todavía en ninguna pantalla.
@@ -57,19 +57,19 @@ SUPABASE_DB_PASSWORD=         # opcional; la app no la lee
 
 ## Acceptance criteria
 
-- [ ] `package.json` incluye `@supabase/supabase-js` y `@supabase/ssr`.
-- [ ] `lib/supabase/client.ts` exporta una factory que crea el cliente de navegador sin tocar cookies de servidor.
-- [ ] `lib/supabase/server.ts` exporta una factory que crea el cliente de servidor leyendo y escribiendo las cookies de Next.
-- [ ] `.env.template` documenta `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` sin valores reales, y aclara que `SUPABASE_DB_PASSWORD` es opcional y la app no lo lee.
-- [ ] `.env.local` contiene las dos variables reales y no está en el repo (regla `.env*` / `!.env.template` de `.gitignore`).
-- [ ] `GET /api/supabase-health` sin las env vars responde 500 con `ok: false` (nunca un crash).
-- [ ] `GET /api/supabase-health` con env vars válidas y Supabase accesible responde 200 con `{ ok: true }`.
-- [ ] Con la URL apuntando a un host inalcanzable responde 5xx con `ok: false` (nunca un 200 falso).
-- [ ] El endpoint no lee ni escribe tablas, no necesita usuarios y no usa la service role key.
-- [ ] Ningún componente ni ruta existente cambia: `/`, `/games`, `/auth`, `/juego/*`, `/jugar/*`, `/salon` y `/sobre-nosotros` se ven y navegan igual; `Nav.tsx` intacto.
-- [ ] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
-- [ ] El repo no contiene valores reales de Supabase (solo `.env.local` local).
-- [ ] La app arranca y funciona sin tener instalada la CLI de Supabase.
+- [x] `package.json` incluye `@supabase/supabase-js` y `@supabase/ssr`.
+- [x] `lib/supabase/client.ts` exporta una factory que crea el cliente de navegador sin tocar cookies de servidor.
+- [x] `lib/supabase/server.ts` exporta una factory que crea el cliente de servidor leyendo y escribiendo las cookies de Next.
+- [x] `.env.template` documenta `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` sin valores reales, y aclara que `SUPABASE_DB_PASSWORD` es opcional y la app no lo lee.
+- [x] `.env.local` contiene las dos variables reales y no está en el repo (regla `.env*` / `!.env.template` de `.gitignore`).
+- [x] `GET /api/supabase-health` sin las env vars responde 500 con `ok: false` (nunca un crash).
+- [x] `GET /api/supabase-health` con env vars válidas y Supabase accesible responde 200 con `{ ok: true }`.
+- [x] Con la URL apuntando a un host inalcanzable responde 5xx con `ok: false` (nunca un 200 falso).
+- [x] El endpoint no lee ni escribe tablas, no necesita usuarios y no usa la service role key.
+- [x] Ningún componente ni ruta existente cambia: `/`, `/games`, `/auth`, `/juego/*`, `/jugar/*`, `/salon` y `/sobre-nosotros` se ven y navegan igual; `Nav.tsx` intacto.
+- [x] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
+- [x] El repo no contiene valores reales de Supabase (solo `.env.local` local).
+- [x] La app arranca y funciona sin tener instalada la CLI de Supabase.
 
 ## Decisions
 
@@ -79,11 +79,11 @@ SUPABASE_DB_PASSWORD=         # opcional; la app no la lee
 - **Sí:** `@supabase/ssr` además de `@supabase/supabase-js`. Es el paquete oficial para App Router con cookies; sin él, el cliente server no podrá mantener sesión cuando llegue el spec de auth.
 - **Sí:** el smoke test = env vars presentes + `fetch` a `${SUPABASE_URL}/auth/v1/health` con `apikey`. Es lo más liviano que prueba URL, red y Kong sin crear tablas ni usuarios, que son fuera de scope.
 - **Sí:** paso explícito de creación/localización del proyecto antes del código. El usuario no tiene claro si existe; el plan lo cubre en los dos casos.
-- **Sí:** mantener `SUPABASE_DB_PASSWORD` documentado en `.env.template` como opcional. Lo agregó el usuario sin commitear; la app con anon key no lo usa, pero sirve para conexión directa (psql) y futuras migraciones. Quitarlo sería tirar trabajo del usuario.
-- **Sí:** env vars con prefijo `NEXT_PUBLIC_`. Estándar de Supabase en Next.js; la anon key es pública por diseño, por eso el comentario que la distingue de la service role.
+- **Sí:** mantener `SUPABASE_DB_PASSWORD` documentado en `.env.template` como opcional. Lo agregó el usuario sin commitear; la app con la publishable key no lo usa, pero sirve para conexión directa (psql) y futuras migraciones. Quitarlo sería tirar trabajo del usuario.
+- **Sí:** env vars con prefijo `NEXT_PUBLIC_`. Estándar de Supabase en Next.js; la publishable key es pública por diseño, por eso el comentario que la distingue de la service role.
 - **Sí:** depender de SPEC 01 (la app existe) y SPEC 03 (patrón de route handler + `.env.template` que este spec amplía).
 - **No:** CLI de Supabase ni `supabase init`. Las migraciones llegan con el spec que cree la primera tabla; la CLI no debe ser requisito para arrancar la app.
-- **No:** service role key en ninguna parte. Solo anon; la service role es secreto de servidor y este spec no tiene operaciones que la requieran.
+- **No:** service role key en ninguna parte. Solo la publishable key; la service role es secreto de servidor y este spec no tiene operaciones que la requieran.
 - **No:** crear una tabla mínima para que el health la consulte. Rompería el "solo integración" y adelantaría el spec de datos.
 - **No:** tocar UI, Nav o cualquier pantalla. El endpoint no se enlaza desde ningún lado; se prueba con curl.
 
@@ -94,7 +94,7 @@ SUPABASE_DB_PASSWORD=         # opcional; la app no la lee
 | El proyecto de Supabase no existe (usuario no seguro).                                                        | Paso 1 del plan lo crea o lo localiza antes de tocar código; sin credenciales no se avanza.                                                                                               |
 | `${SUPABASE_URL}/auth/v1/health` no responde como se espera en este proyecto.                                 | El fallo cae en 500 `{ ok: false }` (visible, nunca un 200 falso); si aparece, usar `${SUPABASE_URL}/rest/v1/` como alternativa, que siempre responde vía Kong.                           |
 | Next 16 con `cacheComponents: true` trata el GET del route handler de forma inesperada (cachea la respuesta). | Leer la guía de route handlers y caching en `node_modules/next/dist/docs/` antes del paso 4, como indica CLAUDE.md; verificar el 500 sin env vars y el 200 con curl en el mismo arranque. |
-| Confundir anon key con service role y filtrarla en el cliente.                                                | Solo se pide la anon key; `.env.template` la comenta como pública y la service role no aparece en ningún lado.                                                                            |
+| Confundir la publishable key con la service role y filtrarla en el cliente.                                   | Solo se pide la publishable key; `.env.template` la comenta como pública y la service role no aparece en ningún lado.                                                                     |
 | El `fetch` a Supabase cuelga si la URL está mal pero resuelve DNS.                                            | El `fetch` lleva `AbortSignal.timeout`; el criterio de aceptación cubre el host inalcanzable con 5xx.                                                                                     |
 
 ## What is **not** in this spec
