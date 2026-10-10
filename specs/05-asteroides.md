@@ -1,6 +1,6 @@
 # SPEC 05 — Juego real de Asteroides (ROCAS/asteroides) portado a Next.js
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02
 > **Date:** 2026-10-10
 > **Objective:** Portar el juego de `references/started-games/02-asteroids/game.js` a un componente React con canvas real servido en una ruta dedicada `/jugar/asteroides`, reutilizando el HUD y el modal de fin de juego del reproductor y guardando la puntuación final en `av_scores`.
@@ -113,26 +113,26 @@ Convenciones heredadas de `game.js`: origen arriba-izquierda, envolvimiento toro
 
 ## Acceptance criteria
 
-- [ ] `/games` muestra una card nueva "ASTEROIDES" (categoría SHOOTER, cover `cover-rocas`) sin alterar las demás.
-- [ ] `/juego/asteroides` renderiza el detalle y "JUGAR AHORA" navega a `/jugar/asteroides`.
-- [ ] `/jugar/asteroides` monta el juego real: se ven la nave triangular, los asteroides irregulares y el fondo negro; nada falla en la consola del navegador.
-- [ ] ← y → rotan la nave; ↑ propulsa (con llama visible); Espacio dispara una bala por pulsación.
-- [ ] Disparar a un asteroide grande lo parte en medianos, y estos en pequeños; cada tamaño suma su puntuación (20 / 50 / 100) en el HUD.
-- [ ] El HUD de React muestra puntuación, vidas (3 al inicio) y nivel, y se actualizan con la partida.
-- [ ] Chocar con un asteroide resta una vida; al reaparecer la nave parpadea (invencible) y no muere de inmediato.
-- [ ] Destruir un asteroide genera partículas de explosión visibles.
-- [ ] Aparece el power-up "3x" y al recogerlo la nave dispara triple durante ~5 s (indicador visible en el HUD).
-- [ ] Limpiar todos los asteroides avanza de nivel y aparecen más asteroides.
-- [ ] Quedarse sin vidas termina la partida y abre el modal "FIN DEL JUEGO" con la puntuación final.
-- [ ] PAUSA congela el juego y muestra el overlay "EN PAUSA"; REANUDAR continúa la partida.
-- [ ] FIN termina la partida en curso y abre el modal.
-- [ ] GUARDAR PUNTUACIÓN escribe una entrada en `av_scores` (con el nombre de la sesión o "INVITADO") y muestra "PUNTUACIÓN GUARDADA_".
-- [ ] JUGAR DE NUEVO reinicia el motor (puntuación 0, 3 vidas, nivel 1); VOLVER AL VAULT navega a `/games`.
-- [ ] Al desmontar la ruta (navegar fuera), el bucle `requestAnimationFrame` y los listeners de teclado quedan liberados (no se acumulan al entrar y salir varias veces).
-- [ ] Las flechas y Espacio no hacen scroll de la página mientras se juega.
-- [ ] El canvas se ve completo y sin deformar dentro del CRT en una ventana estrecha.
-- [ ] `/jugar/rocas` y el resto de ids siguen mostrando el mock de `Reproductor` sin cambios.
-- [ ] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
+- [x] `/games` muestra una card nueva "ASTEROIDES" (categoría SHOOTER, cover `cover-rocas`) sin alterar las demás.
+- [x] `/juego/asteroides` renderiza el detalle y "JUGAR AHORA" navega a `/jugar/asteroides`.
+- [x] `/jugar/asteroides` monta el juego real: se ven la nave triangular, los asteroides irregulares y el fondo negro; nada falla en la consola del navegador.
+- [x] ← y → rotan la nave; ↑ propulsa (con llama visible); Espacio dispara una bala por pulsación.
+- [x] Disparar a un asteroide grande lo parte en medianos, y estos en pequeños; cada tamaño suma su puntuación (20 / 50 / 100) en el HUD.
+- [x] El HUD de React muestra puntuación, vidas (3 al inicio) y nivel, y se actualizan con la partida.
+- [x] Chocar con un asteroide resta una vida; al reaparecer la nave parpadea (invencible) y no muere de inmediato.
+- [x] Destruir un asteroide genera partículas de explosión visibles.
+- [x] Aparece el power-up "3x" y al recogerlo la nave dispara triple durante ~5 s (indicador visible en el HUD).
+- [x] Limpiar todos los asteroides avanza de nivel y aparecen más asteroides.
+- [x] Quedarse sin vidas termina la partida y abre el modal "FIN DEL JUEGO" con la puntuación final.
+- [x] PAUSA congela el juego y muestra el overlay "EN PAUSA"; REANUDAR continúa la partida.
+- [x] FIN termina la partida en curso y abre el modal.
+- [x] GUARDAR PUNTUACIÓN escribe una entrada en `av_scores` (con el nombre de la sesión o "INVITADO") y muestra "PUNTUACIÓN GUARDADA_".
+- [x] JUGAR DE NUEVO reinicia el motor (puntuación 0, 3 vidas, nivel 1); VOLVER AL VAULT navega a `/games`.
+- [x] Al desmontar la ruta (navegar fuera), el bucle `requestAnimationFrame` y los listeners de teclado quedan liberados (no se acumulan al entrar y salir varias veces).
+- [x] Las flechas y Espacio no hacen scroll de la página mientras se juega.
+- [x] El canvas se ve completo y sin deformar dentro del CRT en una ventana estrecha.
+- [x] `/jugar/rocas` y el resto de ids siguen mostrando el mock de `Reproductor` sin cambios.
+- [x] `npx tsc --noEmit` y `npm run lint` terminan sin errores.
 
 ## Decisions
 
