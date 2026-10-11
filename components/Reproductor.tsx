@@ -1,33 +1,32 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useSession } from "@/components/SessionProvider";
-import { GAMES } from "@/lib/data";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSession } from '@/components/SessionProvider';
+import type { Game } from '@/lib/games';
 
 // ===== Reproductor — port de reproductor.jsx =====
 // Mock visual de la plantilla: la puntuación sube sola cada 220 ms.
 // No hay lógica de juego real (decisión del spec). El estado local es
 // score / lives / level / paused / over / saved + name (iniciales).
 
-export function Reproductor({ id }: { id: string }) {
+export function Reproductor({ game }: { game: Game }) {
   const router = useRouter();
   const { user, ready, saveScore } = useSession();
-  const game = GAMES.find((g) => g.id === id);
 
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
   const [paused, setPaused] = useState(false);
   const [over, setOver] = useState(false);
-  const [name, setName] = useState("INVITADO");
+  const [name, setName] = useState('INVITADO');
   const [saved, setSaved] = useState(false);
 
   // El contexto arranca en null (hidratación); una vez listo, el nombre
   // por defecto pasa a ser el de la sesión, como en la plantilla.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (ready && user && name === "INVITADO") setName(user.name);
+    if (ready && user && name === 'INVITADO') setName(user.name);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready, user]);
 
@@ -35,7 +34,7 @@ export function Reproductor({ id }: { id: string }) {
     if (over || paused) return;
     const t = setInterval(
       () => setScore((s) => s + Math.floor(10 + Math.random() * 90)),
-      220
+      220,
     );
     return () => clearInterval(t);
   }, [over, paused]);
@@ -45,8 +44,6 @@ export function Reproductor({ id }: { id: string }) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (score > 0 && score % 2500 < 100) setLevel((l) => l + 1);
   }, [score]);
-
-  if (!game) return null;
 
   const endGame = () => setOver(true);
   const restart = () => {
@@ -61,29 +58,29 @@ export function Reproductor({ id }: { id: string }) {
   return (
     <div className="av-player fade-in">
       <div className="player-hud">
-        <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
           <div className="hud-stat">
             <div className="l">Jugador</div>
-            <div className="v" style={{ color: "var(--ink)" }}>
+            <div className="v" style={{ color: 'var(--ink)' }}>
               {name}
             </div>
           </div>
           <div className="hud-stat">
             <div className="l">Puntuación</div>
-            <div className="v">{score.toLocaleString("es-ES")}</div>
+            <div className="v">{score.toLocaleString('es-ES')}</div>
           </div>
           <div className="hud-stat lives">
             <div className="l">Vidas</div>
-            <div className="v">{"♥ ".repeat(lives).trim() || "—"}</div>
+            <div className="v">{'♥ '.repeat(lives).trim() || '—'}</div>
           </div>
           <div className="hud-stat level">
             <div className="l">Nivel</div>
-            <div className="v">{String(level).padStart(2, "0")}</div>
+            <div className="v">{String(level).padStart(2, '0')}</div>
           </div>
         </div>
         <div className="hud-actions">
           <button className="btn yellow" onClick={() => setPaused((p) => !p)}>
-            {paused ? "REANUDAR" : "PAUSA"}
+            {paused ? 'REANUDAR' : 'PAUSA'}
           </button>
           <button className="btn magenta" onClick={endGame}>
             FIN
@@ -109,7 +106,7 @@ export function Reproductor({ id }: { id: string }) {
           {paused && (
             <div
               className="crt-content"
-              style={{ background: "rgba(0,0,0,0.6)", zIndex: 5 }}
+              style={{ background: 'rgba(0,0,0,0.6)', zIndex: 5 }}
             >
               <div>
                 <div className="pixel neon-yellow" style={{ fontSize: 22 }}>
@@ -119,9 +116,9 @@ export function Reproductor({ id }: { id: string }) {
                   className="mono"
                   style={{
                     fontSize: 11,
-                    color: "var(--ink-dim)",
+                    color: 'var(--ink-dim)',
                     marginTop: 10,
-                    letterSpacing: "0.16em",
+                    letterSpacing: '0.16em',
                   }}
                 >
                   PULSA REANUDAR PARA CONTINUAR
@@ -142,7 +139,7 @@ export function Reproductor({ id }: { id: string }) {
           <div className="modal">
             <h2>FIN DEL JUEGO</h2>
             <div className="final-label">PUNTUACIÓN FINAL</div>
-            <div className="final">{score.toLocaleString("es-ES")}</div>
+            <div className="final">{score.toLocaleString('es-ES')}</div>
             {!saved ? (
               <div className="input-row">
                 <input
@@ -171,7 +168,7 @@ export function Reproductor({ id }: { id: string }) {
               </button>
               <button
                 className="btn magenta"
-                onClick={() => router.push("/games")}
+                onClick={() => router.push('/games')}
               >
                 VOLVER AL VAULT
               </button>

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from '@/components/SessionProvider';
 import { AsteroidsEngine } from '@/lib/asteroids';
-import { GAMES } from '@/lib/data';
+import type { Game } from '@/lib/games';
 
 // ===== AsteroidsGame — juego real de Asteroids =====
 // Port de game.js sobre un <canvas> 800×600. El HUD y el modal viven en React
@@ -14,9 +14,7 @@ import { GAMES } from '@/lib/data';
 
 const PLAY_CODES = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'Space']);
 
-const GAME_ID = 'asteroides';
-
-export function AsteroidsGame() {
+export function AsteroidsGame({ game }: { game: Game }) {
   const router = useRouter();
   const { user, ready, saveScore } = useSession();
 
@@ -33,8 +31,6 @@ export function AsteroidsGame() {
     tripleShot: 0,
   });
   const pausedRef = useRef(false);
-
-  const game = GAMES.find((g) => g.id === GAME_ID);
 
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);

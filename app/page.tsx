@@ -1,5 +1,10 @@
-import { Home } from "@/components/Home";
+import { Home } from '@/components/Home';
+import { getGames } from '@/lib/games';
 
-export default function Page() {
-  return <Home />;
+// El preview de juegos del landing sale de av_games.
+export const instant = false;
+
+export default async function Page() {
+  const games = await getGames();
+  return <Home games={games} />;
 }

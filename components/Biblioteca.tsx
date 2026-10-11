@@ -1,14 +1,26 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useMemo, useRef, useState } from "react";
-import { CATS, GAMES, type Game } from "@/lib/data";
+import { useRouter } from 'next/navigation';
+import { useMemo, useRef, useState } from 'react';
+import { CATS } from '@/lib/data';
+import type { Game, GameMetrics } from '@/lib/games';
 
-// ===== Biblioteca — port de biblioteca.jsx =====
+// ===== Biblioteca — port de biblioteca.jsx (SPEC 06: catálogo desde av_games) =====
 // El tilt de GameCard es manipulación directa del DOM (igual que la
 // plantilla): no es estado renderizado, así que no genera re-renders.
+// `games` y `metrics` llegan por props desde la página de servidor.
 
-function GameCard({ game, onSelect }: { game: Game; onSelect: (game: Game) => void }) {
+function GameCard({
+  game,
+  best,
+  plays,
+  onSelect,
+}: {
+  game: Game;
+  best: number;
+  plays: number;
+  onSelect: (game: Game) => void;
+}) {
   const tiltRef = useRef<HTMLDivElement>(null);
 
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -22,7 +34,7 @@ function GameCard({ game, onSelect }: { game: Game; onSelect: (game: Game) => vo
   const onLeave = () => {
     const el = tiltRef.current;
     if (!el) return;
-    el.style.transform = "";
+    el.style.transform = '';
   };
 
   return (
@@ -41,12 +53,18 @@ function GameCard({ game, onSelect }: { game: Game; onSelect: (game: Game) => vo
         <div className="title">{game.title}</div>
         <div className="desc">{game.short}</div>
         <div className="row">
-          <div className="score-badge">
-            <span>MEJOR PUNTUACIÓN</span>
-            <b>{game.best.toLocaleString("es-ES")}</b>
+          <div style={{ display: 'flex', gap: 16 }}>
+            <div className="score-badge">
+              <span>MEJOR PUNTUACIÓN</span>
+              <b>{best.toLocaleString('es-ES')}</b>
+            </div>
+            <div className="score-badge">
+              <span>PARTIDAS</span>
+              <b>{plays.toLocaleString('es-ES')}</b>
+            </div>
           </div>
           <button
-            className={`btn ${game.color === "magenta" ? "magenta" : game.color === "yellow" ? "yellow" : ""}`}
+            className={`btn ${game.color === 'magenta' ? 'magenta' : game.color === 'yellow' ? 'yellow' : ''}`}
             onClick={(e) => {
               e.stopPropagation();
               onSelect(game);
@@ -60,19 +78,31 @@ function GameCard({ game, onSelect }: { game: Game; onSelect: (game: Game) => vo
   );
 }
 
-export function Biblioteca() {
+export function Biblioteca({
+  games,
+  metrics,
+}: {
+  games: Game[];
+  metrics: GameMetrics[];
+}) {
   const router = useRouter();
-  const [q, setQ] = useState("");
-  const [cat, setCat] = useState<(typeof CATS)[number]>("TODOS");
+  const [q, setQ] = useState('');
+  const [cat, setCat] = useState<(typeof CATS)[number]>('TODOS');
+
+  // best y plays por juego desde av_game_metrics (0 si no hay partidas).
+  const metricOf = useMemo(() => {
+    const map = new Map(metrics.map((m) => [m.game, m]));
+    return (id: string) => map.get(id);
+  }, [metrics]);
 
   const filtered = useMemo(
     () =>
-      GAMES.filter(
+      games.filter(
         (g) =>
-          (cat === "TODOS" || g.cat === cat) &&
-          g.title.toLowerCase().includes(q.toLowerCase())
+          (cat === 'TODOS' || g.cat === cat) &&
+          g.title.toLowerCase().includes(q.toLowerCase()),
       ),
-    [q, cat]
+    [games, q, cat],
   );
 
   const goDetalle = (game: Game) => router.push(`/juego/${game.id}`);
@@ -99,7 +129,7 @@ export function Biblioteca() {
           {CATS.map((c) => (
             <button
               key={c}
-              className={`chip${cat === c ? " active" : ""}`}
+              className={`chip${cat === c ? 'active' : ''}`}
               onClick={() => setCat(c)}
             >
               {c}
@@ -110,20 +140,30 @@ export function Biblioteca() {
 
       <div className="av-grid">
         {filtered.map((g) => (
-          <GameCard key={g.id} game={g} onSelect={goDetalle} />
+          <GameCard
+            key={g.id}
+            game={g}
+            best={metricOf(g.id)?.best ?? 0}
+            plays={metricOf(g.id)?.plays ?? 0}
+            onSelect={goDetalle}
+          />
         ))}
         {filtered.length === 0 && (
           <div
             style={{
-              gridColumn: "1 / -1",
-              textAlign: "center",
+              gridColumn: '1 / -1',
+              textAlign: 'center',
               padding: 80,
-              color: "var(--ink-faint)",
+              color: 'var(--ink-faint)',
             }}
           >
             <div
               className="pixel"
-              style={{ fontSize: 14, color: "var(--magenta)", marginBottom: 12 }}
+              style={{
+                fontSize: 14,
+                color: 'var(--magenta)',
+                marginBottom: 12,
+              }}
             >
               NO HAY RESULTADOS
             </div>
