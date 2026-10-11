@@ -1,6 +1,6 @@
 # SPEC 06 — Leaderboard y tabla de juegos en Supabase
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02, SPEC 04, SPEC 05
 > **Date:** 2026-10-11
 > **Objective:** Crear las tablas `av_games` y `av_scores` en Supabase y servir desde ahí un leaderboard real (por juego y global) y el guardado de puntuaciones, reemplazando los mocks deterministas del Salón y del Detalle.
