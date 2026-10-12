@@ -15,7 +15,7 @@ values (
   'tetris',
   'TETRIS',
   'Alinea filas y encadena tetrominós.',
-  'Duérmete y la torre te entierra. Rota, desplaza y encaja las siete piezas (y una octava tuerca) para completar líneas antes de que lleguen al techo.',
+  'Duérmete y la torre te entierra. Rota, desplaza y encaja las siete piezas para completar líneas antes de que lleguen al techo.',
   'PUZZLE',
   'cover-tetro',
   'magenta',

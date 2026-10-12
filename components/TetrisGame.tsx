@@ -85,12 +85,15 @@ export function TetrisGame({ game }: { game: Game }) {
           height={600}
           className="tetris-board"
         />
-        <canvas
-          ref={nextRef}
-          width={120}
-          height={120}
-          className="tetris-next"
-        />
+        <div className="tetris-side">
+          <span className="tetris-side-label">Siguiente</span>
+          <canvas
+            ref={nextRef}
+            width={120}
+            height={120}
+            className="tetris-next"
+          />
+        </div>
       </div>
     </GameShell>
   );

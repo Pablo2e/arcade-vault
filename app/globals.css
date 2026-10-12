@@ -1133,18 +1133,19 @@ a {
   image-rendering: pixelated;
 }
 
-/* Tetris — dos canvas (board 300×600 + preview 120×120) lado a lado dentro del
-   CRT 4/3 con letterboxing. El .crt-screen es 4/3; el tablero 300×600 es 1:2,
-   así que se le da alto 100% y el ancho sale de su propia relación 1:2, con el
-   hueco para la columna del preview al lado. Los atributos internos no cambian. */
+/* Tetris — tablero 300×600 + preview 120×120 dentro del CRT 4/3 con letterboxing.
+   Cada canvas es su propio panel (fondo + marco neón) para que el campo de juego
+   y la pieza siguiente se lean como dos pantallas separadas, como el #board y el
+   #next-canvas con border + background del original. El fondo es CSS: el motor
+   limpia con clearRect y pinta rejilla y piezas encima, dejando ver el panel. */
 .tetris-stage {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  padding: 8px;
+  gap: 24px;
+  padding: 16px;
 }
 .tetris-board {
   display: block;
@@ -1152,16 +1153,46 @@ a {
   max-width: 100%;
   aspect-ratio: 1 / 2;
   image-rendering: pixelated;
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(0, 245, 255, 0.06),
+      transparent 65%
+    ),
+    var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow:
+    0 0 18px rgba(0, 245, 255, 0.14),
+    inset 0 0 44px rgba(0, 0, 0, 0.85);
+}
+.tetris-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 120px;
+  flex-shrink: 0;
+}
+.tetris-side-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 .tetris-next {
   display: block;
-  margin-top: auto;
+  width: 100%;
   height: auto;
-  width: 40%;
-  max-width: 120px;
   aspect-ratio: 1 / 1;
   image-rendering: pixelated;
-  flex-shrink: 0;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow:
+    0 0 14px rgba(0, 245, 255, 0.1),
+    inset 0 0 28px rgba(0, 0, 0, 0.85);
 }
 
 /* game over modal */

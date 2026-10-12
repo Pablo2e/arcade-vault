@@ -10,8 +10,8 @@ export const TETRIS_COLS = 10;
 export const TETRIS_ROWS = 20;
 export const TETRIS_BLOCK = 30;
 
-// Índice 1..8: I cyan, O amarillo, T morado, S verde, Z rojo, J azul pálido,
-// L naranja, N "tuerca" gris metálico (octava pieza del original).
+// Índice 1..7: I cyan, O amarillo, T morado, S verde, Z rojo, J azul pálido,
+// L naranja. Se descarta la octava pieza "N"/tuerca del original: solo 7.
 const COLORS = [
   null,
   '#4dd0e1',
@@ -21,7 +21,6 @@ const COLORS = [
   '#e57373',
   '#90caf9',
   '#ffb74d',
-  '#9e9e9e',
 ];
 
 const PIECES = [
@@ -61,11 +60,6 @@ const PIECES = [
     [7, 7, 7],
     [0, 0, 0],
   ], // L
-  [
-    [8, 8, 8],
-    [8, 0, 8],
-    [8, 8, 8],
-  ], // N (tuerca)
 ];
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
@@ -88,8 +82,8 @@ function createBoard(): number[][] {
 }
 
 function randomPiece(): Piece {
-  const type = Math.floor(Math.random() * 8) + 1;
-  // type siempre ∈ 1..8 (índices 1..8 de PIECES; 0 = null es solo centinela).
+  const type = Math.floor(Math.random() * 7) + 1;
+  // type siempre ∈ 1..7 (índices 1..7 de PIECES; 0 = null es solo centinela).
   const shape = PIECES[type]!.map((row) => [...row]);
   return {
     type,
@@ -399,7 +393,7 @@ function drawBlock(
   alpha = 1,
 ) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex]!; // colorIndex ∈ 1..8 cuando no es 0
+  const color = COLORS[colorIndex]!; // colorIndex ∈ 1..7 cuando no es 0
   ctx.globalAlpha = alpha;
   ctx.fillStyle = color;
   ctx.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);

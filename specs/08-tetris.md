@@ -14,7 +14,7 @@ SPEC 05 portó el primer juego real (Asteroids) a una ruta dedicada con su motor
 **In:**
 
 - Puerto de `03-tetris/game.js` → motor puro `lib/tetris.ts` (`class TetrisEngine`), sin DOM y sin React, contra el contrato `PlayableEngine` (SPEC 07):
-  - Tablero 10×20, celdas de 30 px; piezas IOTA-T-S-Z-J-L y una octava pieza "N" gris (tuerca) del original; colores canónicos.
+  - Tablero 10×20, celdas de 30 px; las siete piezas canónicas I, O, T, S, Z, J, L con sus colores; **se descarta la octava pieza "N" gris (tuerca) del original** (el usuario no la quiere en el juego).
   - Caída, rotación (transpose+reverse) con wall kicks `[0,-1,1,-2,2]`, fantasmas a `globalAlpha 0.2`, hard/soft drop con su puntuación (+2/celda, +1/row), `touch`/`gameover`.
   - `LINE_SCORES = [0, 100, 300, 500, 800]` × nivel; nivel = `floor(lines/10) + 1`; `dropInterval = max(100, 1000 − (level−1)·90)` ms.
   - **Se retira el `getComputedStyle(...)` de `drawGrid`**: se reemplaza por un color fijo (el neon del CRT). _Se retira el theme toggle_ (Arcade Vault es dark-only). El HUD DOM (`#score/#lines/#level`) sale del motor y pasa a React vía `getSnapshot()`.
@@ -31,7 +31,7 @@ SPEC 05 portó el primer juego real (Asteroids) a una ruta dedicada con su motor
 **Out of scope (for future specs):**
 
 - Portar el resto de juegos (`04-arkanoid`, etc.): cada uno en su spec.
-- El modo "próximo" fuera de los dos canvases, piezas extra además de la octava "N", hold de piezas, tabla de récords local, sonido, móvil/táctil, gamepad.
+- El modo "próximo" fuera de los dos canvases, piezas extra además de las siete canónicas, hold de piezas, tabla de récords local, sonido, móvil/táctil, gamepad.
 - Cambios visuales al diseño: el HUD, la pausa y el modal de SPEC 07 se reutilizan tal cual.
 - Puntuaciones o validación en servidor, autenticación real, anti-cheat.
 
@@ -43,8 +43,8 @@ El motor (`lib/tetris.ts`) — estructuras y constantes clave, fieles al origina
 const COLS = 10;
 const ROWS = 20;
 const BLOCK = 30; // px
-const COLORS = [ /* 1..8: I cyan, O yellow, T purple, S green, Z red, J pale-blue, L orange, N gray */ ];
-const PIECES = [ /* 8 matrices 4x4/rot states, incl. la "N" tuerca */ KICKS: [0,-1,1,-2,2] ];
+const COLORS = [ /* 1..7: I cyan, O yellow, T purple, S green, Z red, J pale-blue, L orange */ ];
+const PIECES = [ /* 7 matrices 4x4/rot states (la "N" tuerca se descarta) */ KICKS: [0,-1,1,-2,2] ];
 const LINE_SCORES = [0, 100, 300, 500, 800];
 // nivel = floor(lines/10)+1; dropInterval = max(100, 1000-(level-1)*90) ms; ghost @ alpha .2
 ```
@@ -87,7 +87,7 @@ insert into public.av_games (id, title, short, long, cat, cover, color, sort)
 values (
   'tetris', 'TETRIS',
   'Alinea filas y encadena tetrominós.',
-  'Duérmete y la torre te entierra. Rota, desplaza y encaja las siete piezas (y una octava tuerca) para completar líneas antes de que lleguen al techo.',
+  'Duérmete y la torre te entierra. Rota, desplaza y encaja las siete piezas para completar líneas antes de que lleguen al techo.',
   'PUZZLE', 'cover-tetro', 'magenta', 9
 );
 ```
@@ -129,7 +129,7 @@ values (
 - **Sí:** board 300×600 + preview 120×120 lado a lado dentro del 4/3 con letterboxing (decisión de Fase C).
 - **Sí:** HUD sin Vidas, mostrando Líneas (decisión de Fase C). El snapshot conserva `lives:3` por el contrato, pero el tile no se pinta.
 - **Sí:** retirar el theme toggle del original (Arcade Vault es dark-only) y `getComputedStyle` → color fijo. Preciso para un motor sin DOM.
-- **Sí:** se conserva la octava pieza "N" (tuerca) del original — es cultura del juego, no un error.
+- **Sí:** se descarta la octava pieza "N" (tuerca) del original — el usuario pidió explícitamente que no aparezca en partida (aunque el original la traiga, aquí son solo las siete canónicas).
 - **No:** portar el resto de juegos, "hold", tabla local, sonido, móvil/táctil, gamepad, anti-cheat, validación en servidor. Van en specs propios.
 
 ## Risks
@@ -140,7 +140,7 @@ values (
 | El `getSnapshot()` reporta `lives` a 3 y el shell lo pinta igual que "Vidas". | El adapter omite el tile (decisión de Fase C); `extra.lines` es la fuente del HUD.                               |
 | Doble montaje de `useEffect` (StrictMode) → bucles/listeners duplicados.      | Cleanup del hook (SPEC 07) cancela frame y quita listeners; criterio de aceptación de entrar/salir.              |
 | Reusar `getGame('tetris')` exige la fila aplicada antes de la ruta.           | El paso 4 aplica la migración antes del paso 6 (verificación); `notFound()` da 404 hasta entonces, sin crashear. |
-| El preview "N" no se dibuja / fuga de `lives` al snapshot.                    | `extras[0]` dibuja el preview cada frame; `getSnapshot` devuelve estado plano fiel al contrato.                  |
+| El preview no se dibuja / fuga de `lives` al snapshot.                        | `extras[0]` dibuja el preview cada frame; `getSnapshot` devuelve estado plano fiel al contrato.                  |
 | Diferencias de timming vs el original (dt limitado a 50 ms en el host).       | Mismo host que Asteroids/Spec 07; el hueco es preexistente y afecta igual a todos los juegos.                    |
 
 ## What is **not** in this spec

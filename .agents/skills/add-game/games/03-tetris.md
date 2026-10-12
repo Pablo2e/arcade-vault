@@ -18,9 +18,10 @@ functions — no classes).
 ## Cultural constants (preserve verbatim)
 
 - `COLS=10`, `ROWS=20`, `BLOCK=30`.
-- `COLORS[1..8]`: I cyan, O yellow, T purple, S green, Z red, J pale blue,
-  L orange, **N gray "tuerca"** (a custom 8th piece — the README/docs say 7).
-- `PIECES[1..8]`; `LINE_SCORES = [0, 100, 300, 500, 800]` × level.
+- `COLORS[1..7]`: I cyan, O yellow, T purple, S green, Z red, J pale blue,
+  L orange. The original's gray 8th piece **"N" (tuerca)** is dropped — only the
+  seven canonical tetrominoes ship.
+- `PIECES[1..7]`; `LINE_SCORES = [0, 100, 300, 500, 800]` × level.
 - level = `floor(lines/10) + 1`; `dropInterval = max(100, 1000 − (level−1)·90)` ms.
 - Ghost piece at `globalAlpha = 0.2`; hard drop +2/cell, soft drop +1/row.
 - Rotation = transpose + reverse, with wall kicks `[0, −1, 1, −2, 2]`.
