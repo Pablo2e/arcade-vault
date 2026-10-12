@@ -1121,76 +1121,6 @@ a {
   box-shadow: 0 0 6px var(--green);
 }
 
-/* fake in-screen game */
-.game-arena {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 50% 50%, #0a0030 0%, #000 70%), #000;
-}
-.game-arena .grid-floor {
-  position: absolute;
-  inset: 50% 0 0 0;
-  background:
-    linear-gradient(to right, rgba(0, 245, 255, 0.4) 1px, transparent 1px) 0
-      0/40px 40px,
-    linear-gradient(to bottom, rgba(0, 245, 255, 0.4) 1px, transparent 1px) 0
-      0/40px 40px;
-  transform: perspective(300px) rotateX(70deg);
-  transform-origin: top;
-  animation: gridscroll 4s linear infinite;
-  opacity: 0.7;
-}
-.game-arena .player-ship {
-  position: absolute;
-  bottom: 14%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-bottom: 22px solid var(--cyan);
-  filter: drop-shadow(0 0 8px var(--cyan));
-  transform: translateX(-50%);
-  animation: bob 2s ease-in-out infinite;
-}
-@keyframes bob {
-  50% {
-    transform: translateX(-50%) translateY(-6px);
-  }
-}
-.game-arena .enemy {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: var(--magenta);
-  box-shadow: 0 0 8px var(--magenta);
-}
-.game-arena .e1 {
-  top: 18%;
-  left: 22%;
-  animation: drift 3s ease-in-out infinite;
-}
-.game-arena .e2 {
-  top: 26%;
-  left: 70%;
-  animation: drift 3.2s ease-in-out infinite reverse;
-}
-.game-arena .e3 {
-  top: 14%;
-  left: 50%;
-  background: var(--yellow);
-  box-shadow: 0 0 8px var(--yellow);
-  animation: drift 2.8s ease-in-out infinite;
-}
-@keyframes drift {
-  50% {
-    transform: translate(20px, 10px);
-  }
-}
-
 /* Asteroides — el canvas real llena el CRT. El sistema de coordenadas interno
    sigue siendo 800×600 (atributos width/height); el CSS solo escala la vista.
    El .crt-screen ya es 4/3, así que un canvas 4/3 lo llena sin deformarse. */
@@ -1201,6 +1131,68 @@ a {
   height: 100%;
   aspect-ratio: 4 / 3;
   image-rendering: pixelated;
+}
+
+/* Tetris — tablero 300×600 + preview 120×120 dentro del CRT 4/3 con letterboxing.
+   Cada canvas es su propio panel (fondo + marco neón) para que el campo de juego
+   y la pieza siguiente se lean como dos pantallas separadas, como el #board y el
+   #next-canvas con border + background del original. El fondo es CSS: el motor
+   limpia con clearRect y pinta rejilla y piezas encima, dejando ver el panel. */
+.tetris-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px;
+}
+.tetris-board {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1 / 2;
+  image-rendering: pixelated;
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(0, 245, 255, 0.06),
+      transparent 65%
+    ),
+    var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow:
+    0 0 18px rgba(0, 245, 255, 0.14),
+    inset 0 0 44px rgba(0, 0, 0, 0.85);
+}
+.tetris-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 120px;
+  flex-shrink: 0;
+}
+.tetris-side-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.tetris-next {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  image-rendering: pixelated;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow:
+    0 0 14px rgba(0, 245, 255, 0.1),
+    inset 0 0 28px rgba(0, 0, 0, 0.85);
 }
 
 /* game over modal */

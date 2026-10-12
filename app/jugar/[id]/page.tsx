@@ -1,17 +1,12 @@
-import { notFound } from 'next/navigation';
-import { Reproductor } from '@/components/Reproductor';
-import { getGames } from '@/lib/games';
+import { redirect } from 'next/navigation';
 
-// Mismo criterio que /juego/[id]: el id se valida con notFound() contra av_games
-// (getGames() usa cookies(), no disponible en generateStaticParams, así que se
-// omite y la ruta queda dinámica).
+// Comodín de /jugar: sin mock (SPEC 09). Cualquier id con ruta estática
+// (asteroides, tetris) gana este segmento; los demás se envían al detalle
+// /juego/[id], que valida el id contra el catálogo y devuelve notFound() si
+// no existe. Así /jugar nunca fabrica un simulacro de juego.
 export const instant = false;
 
 export default async function JugarPage({ params }: PageProps<'/jugar/[id]'>) {
   const { id } = await params;
-  const games = await getGames();
-  const game = games.find((g) => g.id === id);
-  if (!game) notFound();
-
-  return <Reproductor game={game} />;
+  redirect(`/juego/${id}`);
 }

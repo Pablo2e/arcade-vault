@@ -3,6 +3,8 @@
 // con `input(code, down)` y cada frame llama a `update(dt)` + `draw(ctx)`.
 // El HUD de React NO se dibuja aquí: `getSnapshot()` reporta el estado.
 
+import type { GameSnapshot } from '@/lib/engine';
+
 export const W = 800;
 export const H = 600;
 
@@ -332,15 +334,9 @@ export class Particle {
 // ── Estado del juego ───────────────────────────────────────────────────────────
 export type GameState = 'playing' | 'dead' | 'gameover';
 
-export type GameSnapshot = {
-  score: number;
-  lives: number;
-  level: number;
-  over: boolean;
-  tripleShot: number; // segundos restantes del 3x (0 = inactivo)
-};
-
 export class AsteroidsEngine {
+  readonly width = W;
+  readonly height = H;
   ship: Ship;
   bullets: Bullet[] = [];
   asteroids: Asteroid[] = [];
@@ -539,7 +535,7 @@ export class AsteroidsEngine {
       lives: this.lives,
       level: this.level,
       over: this.state === 'gameover',
-      tripleShot: Math.max(0, this.ship.tripleShot),
+      extra: { tripleShot: Math.max(0, this.ship.tripleShot) },
     };
   }
 }

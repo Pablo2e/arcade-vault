@@ -1,29 +1,48 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useSession } from '@/components/SessionProvider';
+import type { HudStat } from '@/lib/engine';
 import type { Game } from '@/lib/games';
 
-// ===== Reproductor — port de reproductor.jsx =====
-// Mock visual de la plantilla: la puntuación sube sola cada 220 ms.
-// No hay lógica de juego real (decisión del spec). El estado local es
-// score / lives / level / paused / over / saved + name (iniciales).
+// ===== GameShell — chrome único de un juego (SPEC 07) =====
+// Presentacional y sin motor: pinta el HUD (Jugador/Puntuación + stats), los
+// botones PAUSA/FIN/SALIR, el marco CRT, el overlay EN PAUSA y el modal FIN DEL
+// JUEGO con guardado en av_scores. Los juegos solo aportan sus canvas como
+// children (el mock se eliminó en SPEC 09).
 
-export function Reproductor({ game }: { game: Game }) {
+type GameShellProps = {
+  game: Game;
+  score: number;
+  over: boolean;
+  paused: boolean;
+  stats: HudStat[];
+  onTogglePause: () => void;
+  onEnd: () => void;
+  onRestart: () => void;
+  children: ReactNode;
+};
+
+export function GameShell({
+  game,
+  score,
+  over,
+  paused,
+  stats,
+  onTogglePause,
+  onEnd,
+  onRestart,
+  children,
+}: GameShellProps) {
   const router = useRouter();
   const { user, ready, saveScore } = useSession();
 
-  const [score, setScore] = useState(0);
-  const [lives, setLives] = useState(3);
-  const [level, setLevel] = useState(1);
-  const [paused, setPaused] = useState(false);
-  const [over, setOver] = useState(false);
   const [name, setName] = useState('INVITADO');
   const [saved, setSaved] = useState(false);
 
-  // El contexto arranca en null (hidratación); una vez listo, el nombre
-  // por defecto pasa a ser el de la sesión, como en la plantilla.
+  // El contexto arranca en null (hidratación); una vez listo, el nombre por
+  // defecto pasa a ser el de la sesión. Al reiniciar se limpia `saved`.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (ready && user && name === 'INVITADO') setName(user.name);
@@ -31,29 +50,9 @@ export function Reproductor({ game }: { game: Game }) {
   }, [ready, user]);
 
   useEffect(() => {
-    if (over || paused) return;
-    const t = setInterval(
-      () => setScore((s) => s + Math.floor(10 + Math.random() * 90)),
-      220,
-    );
-    return () => clearInterval(t);
-  }, [over, paused]);
-
-  // Subida de nivel calculada desde score, igual que la plantilla.
-  useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (score > 0 && score % 2500 < 100) setLevel((l) => l + 1);
-  }, [score]);
-
-  const endGame = () => setOver(true);
-  const restart = () => {
-    setScore(0);
-    setLives(3);
-    setLevel(1);
-    setPaused(false);
-    setOver(false);
-    setSaved(false);
-  };
+    if (!over) setSaved(false);
+  }, [over]);
 
   return (
     <div className="av-player fade-in">
@@ -69,20 +68,21 @@ export function Reproductor({ game }: { game: Game }) {
             <div className="l">Puntuación</div>
             <div className="v">{score.toLocaleString('es-ES')}</div>
           </div>
-          <div className="hud-stat lives">
-            <div className="l">Vidas</div>
-            <div className="v">{'♥ '.repeat(lives).trim() || '—'}</div>
-          </div>
-          <div className="hud-stat level">
-            <div className="l">Nivel</div>
-            <div className="v">{String(level).padStart(2, '0')}</div>
-          </div>
+          {stats.map((s) => (
+            <div
+              key={s.key}
+              className={`hud-stat${s.tone && s.tone !== 'default' ? ` ${s.tone}` : ''}`}
+            >
+              <div className="l">{s.label}</div>
+              <div className="v">{s.value}</div>
+            </div>
+          ))}
         </div>
         <div className="hud-actions">
-          <button className="btn yellow" onClick={() => setPaused((p) => !p)}>
+          <button className="btn yellow" onClick={onTogglePause}>
             {paused ? 'REANUDAR' : 'PAUSA'}
           </button>
-          <button className="btn magenta" onClick={endGame}>
+          <button className="btn magenta" onClick={onEnd}>
             FIN
           </button>
           <button
@@ -96,13 +96,7 @@ export function Reproductor({ game }: { game: Game }) {
 
       <div className="crt">
         <div className="crt-screen">
-          <div className="game-arena">
-            <div className="grid-floor"></div>
-            <div className="enemy e1"></div>
-            <div className="enemy e2"></div>
-            <div className="enemy e3"></div>
-            <div className="player-ship"></div>
-          </div>
+          {children}
           {paused && (
             <div
               className="crt-content"
@@ -163,7 +157,7 @@ export function Reproductor({ game }: { game: Game }) {
               <div className="toast-saved">▸ PUNTUACIÓN GUARDADA_</div>
             )}
             <div className="actions">
-              <button className="btn" onClick={restart}>
+              <button className="btn" onClick={onRestart}>
                 JUGAR DE NUEVO
               </button>
               <button
