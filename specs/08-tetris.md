@@ -1,6 +1,6 @@
 # SPEC 08 — Juego real de Tetris portado a Next.js (TETRIS/tetris)
 
-> **Status:** Borrador
+> **Status:** Implementado
 > **Depends on:** SPEC 05, SPEC 06, SPEC 07
 > **Date:** 2026-10-12
 > **Objective:** Portar `references/started-games/03-tetris/game.js` a un componente React con dos canvases servido en la ruta dedicada `/jugar/tetris`, construido sobre el contrato compartido de un juego (SPEC 07) y guardando la puntuación final en `av_scores` (SPEC 06).

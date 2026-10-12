@@ -89,9 +89,8 @@ sounds / in-canvas level-select); (7) control parity. Record closed decisions
 If `components/GameShell.tsx` / `lib/engine.ts` / `lib/useGameEngine.ts` are
 missing, stop: the shared layer is the prerequisite. Author it as its own spec
 (`specs/NN-shared-game-contract.md`, written with the repo's /spec flow — see
-Phase E) and implement it first (create the three files; refactor
-`AsteroidsGame.tsx` + `Reproductor.tsx`; no visual regression), then continue.
-If it exists, skip to Phase E.
+Phase E) and implement it first (create the three files; no visual regression),
+then continue. If it exists, skip to Phase E.
 
 ## Phase E — Write the spec (delegate to the repo's /spec flow)
 

@@ -133,12 +133,12 @@ type GameShellProps = {
   onTogglePause: () => void;
   onEnd: () => void; // FIN
   onRestart: () => void; // JUGAR DE NUEVO
-  children: ReactNode; // the canvas(es) or mock arena, inside .crt-screen
+  children: ReactNode; // the canvas(es), inside .crt-screen
 };
 ```
 
-It renders what is today duplicated verbatim between `AsteroidsGame.tsx` and
-`Reproductor.tsx`:
+It renders the chrome shared by every real game (`AsteroidsGame.tsx`,
+`TetrisGame.tsx`):
 
 - `.av-player` → `.player-hud` with the always-present `Jugador` and `Puntuación`
   tiles (`score.toLocaleString('es-ES')`) followed by `stats.map` →
@@ -166,9 +166,6 @@ It renders what is today duplicated verbatim between `AsteroidsGame.tsx` and
   listeners and calls `engine.pointer({ x, y, kind })`; the engine moves the
   paddle. Keyboard still arrives through `input`. The reference's in-canvas pause
   menu is dropped in favor of the shared React overlay (a recorded decision).
-- **The mock (Reproductor).** It keeps its `setInterval` score ticker and level
-  math but renders `<GameShell …>{<div className="game-arena">…</div>}</GameShell>`.
-  It is a _driver_ of the same shell with no engine.
 
 ## Reuse map (do not reinvent these)
 
@@ -176,7 +173,8 @@ It renders what is today duplicated verbatim between `AsteroidsGame.tsx` and
   `.hud-stat[.lives|.level]`, `.hud-actions`, `.btn[.yellow|.magenta|.ghost]`,
   `.crt`/`.crt-screen`/`.crt-content`/`.crt-bottom`/`.led`, `.asteroids-canvas`,
   `.modal-bd`/`.modal`/`.final`/`.final-label`/`.input-row`/`.actions`/`.toast-saved`,
-  `.game-arena`. `.crt-screen` has `aspect-ratio: 4/3`.
+  `.asteroids-canvas`, `.tetris-stage`/`.tetris-board`/`.tetris-next`.
+  `.crt-screen` has `aspect-ratio: 4/3`.
 - `useSession()` from `components/SessionProvider.tsx`: `user`, `ready`,
   `saveScore`. Every game saves with `saveScore({ game: game.id, score, name })`.
 - Route pattern: `export const instant = false;` + `getGame(id)` → `notFound()`.

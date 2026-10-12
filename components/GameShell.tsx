@@ -10,7 +10,7 @@ import type { Game } from '@/lib/games';
 // Presentacional y sin motor: pinta el HUD (Jugador/Puntuación + stats), los
 // botones PAUSA/FIN/SALIR, el marco CRT, el overlay EN PAUSA y el modal FIN DEL
 // JUEGO con guardado en av_scores. Los juegos solo aportan sus canvas como
-// children; el mock (Reproductor) aporta su arena decorativa.
+// children (el mock se eliminó en SPEC 09).
 
 type GameShellProps = {
   game: Game;

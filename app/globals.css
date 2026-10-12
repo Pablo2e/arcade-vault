@@ -1121,76 +1121,6 @@ a {
   box-shadow: 0 0 6px var(--green);
 }
 
-/* fake in-screen game */
-.game-arena {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 50% 50%, #0a0030 0%, #000 70%), #000;
-}
-.game-arena .grid-floor {
-  position: absolute;
-  inset: 50% 0 0 0;
-  background:
-    linear-gradient(to right, rgba(0, 245, 255, 0.4) 1px, transparent 1px) 0
-      0/40px 40px,
-    linear-gradient(to bottom, rgba(0, 245, 255, 0.4) 1px, transparent 1px) 0
-      0/40px 40px;
-  transform: perspective(300px) rotateX(70deg);
-  transform-origin: top;
-  animation: gridscroll 4s linear infinite;
-  opacity: 0.7;
-}
-.game-arena .player-ship {
-  position: absolute;
-  bottom: 14%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-left: 14px solid transparent;
-  border-right: 14px solid transparent;
-  border-bottom: 22px solid var(--cyan);
-  filter: drop-shadow(0 0 8px var(--cyan));
-  transform: translateX(-50%);
-  animation: bob 2s ease-in-out infinite;
-}
-@keyframes bob {
-  50% {
-    transform: translateX(-50%) translateY(-6px);
-  }
-}
-.game-arena .enemy {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: var(--magenta);
-  box-shadow: 0 0 8px var(--magenta);
-}
-.game-arena .e1 {
-  top: 18%;
-  left: 22%;
-  animation: drift 3s ease-in-out infinite;
-}
-.game-arena .e2 {
-  top: 26%;
-  left: 70%;
-  animation: drift 3.2s ease-in-out infinite reverse;
-}
-.game-arena .e3 {
-  top: 14%;
-  left: 50%;
-  background: var(--yellow);
-  box-shadow: 0 0 8px var(--yellow);
-  animation: drift 2.8s ease-in-out infinite;
-}
-@keyframes drift {
-  50% {
-    transform: translate(20px, 10px);
-  }
-}
-
 /* Asteroides — el canvas real llena el CRT. El sistema de coordenadas interno
    sigue siendo 800×600 (atributos width/height); el CSS solo escala la vista.
    El .crt-screen ya es 4/3, así que un canvas 4/3 lo llena sin deformarse. */
@@ -1201,6 +1131,37 @@ a {
   height: 100%;
   aspect-ratio: 4 / 3;
   image-rendering: pixelated;
+}
+
+/* Tetris — dos canvas (board 300×600 + preview 120×120) lado a lado dentro del
+   CRT 4/3 con letterboxing. El .crt-screen es 4/3; el tablero 300×600 es 1:2,
+   así que se le da alto 100% y el ancho sale de su propia relación 1:2, con el
+   hueco para la columna del preview al lado. Los atributos internos no cambian. */
+.tetris-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 8px;
+}
+.tetris-board {
+  display: block;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1 / 2;
+  image-rendering: pixelated;
+}
+.tetris-next {
+  display: block;
+  margin-top: auto;
+  height: auto;
+  width: 40%;
+  max-width: 120px;
+  aspect-ratio: 1 / 1;
+  image-rendering: pixelated;
+  flex-shrink: 0;
 }
 
 /* game over modal */

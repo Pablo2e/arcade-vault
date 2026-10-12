@@ -40,6 +40,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# supabase cli local state (npx supabase …)
+/supabase/.temp/
+
+# temp DSNs con credenciales de la base (nunca commitear)
+.dsns.tmp
+*.dsns.tmp
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
