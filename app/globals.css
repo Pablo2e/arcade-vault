@@ -845,6 +845,63 @@ a {
   filter: drop-shadow(0 0 6px rgba(0, 245, 255, 0.4));
 }
 
+.cover-arkanoid {
+  background: linear-gradient(180deg, #0a0a18, #000);
+}
+.cover-arkanoid::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    /* Paddle */
+    linear-gradient(var(--cyan), var(--cyan)) 50% 85% / 40% 4% no-repeat,
+    /* Ball */
+    radial-gradient(circle at 50% 65%, var(--yellow) 0 6px, transparent 7px),
+    /* Blocks rows */
+    repeating-linear-gradient(
+        90deg,
+        #ff006e 0 10%,
+        #ffae00 10% 20%,
+        #00f5ff 20% 30%,
+        #ff006e 30% 40%,
+        #f5ff00 40% 50%,
+        #00ff88 50% 60%,
+        #00f5ff 60% 70%,
+        #ff006e 70% 80%,
+        #f5ff00 80% 90%,
+        #00ff88 90% 100%
+      )
+      0 10% / 100% 8%,
+    repeating-linear-gradient(
+        90deg,
+        transparent 0 10%,
+        rgba(0, 0, 0, 0.4) 10% 10.5%
+      )
+      0 10% / 100% 8%,
+    repeating-linear-gradient(
+        90deg,
+        #ffae00 0 10%,
+        #00f5ff 10% 20%,
+        #ff006e 20% 30%,
+        #f5ff00 30% 40%,
+        #00ff88 40% 50%,
+        #00f5ff 50% 60%,
+        #ff006e 60% 70%,
+        #f5ff00 70% 80%,
+        #00ff88 80% 90%,
+        #ffae00 90% 100%
+      )
+      0 20% / 100% 8%,
+    repeating-linear-gradient(
+        90deg,
+        transparent 0 10%,
+        rgba(0, 0, 0, 0.4) 10% 10.5%
+      )
+      0 20% / 100% 8%;
+  filter: drop-shadow(0 0 8px rgba(0, 245, 255, 0.4));
+  image-rendering: pixelated;
+}
+
 /* ===== detail screen ===== */
 .av-detail {
   display: grid;
@@ -1125,6 +1182,16 @@ a {
    sigue siendo 800×600 (atributos width/height); el CSS solo escala la vista.
    El .crt-screen ya es 4/3, así que un canvas 4/3 lo llena sin deformarse. */
 .asteroids-canvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  aspect-ratio: 4 / 3;
+  image-rendering: pixelated;
+}
+
+/* Arkanoid — canvas 800×600 (4/3) dentro del CRT. Igual que Asteroides. */
+.arkanoid-canvas {
   display: block;
   width: 100%;
   max-width: 100%;
