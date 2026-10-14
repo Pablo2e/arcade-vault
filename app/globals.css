@@ -732,6 +732,31 @@ a {
   filter: drop-shadow(0 0 6px rgba(0, 255, 136, 0.6));
 }
 
+/* cover-snake con spritesheet de frutas (usa la imagen real) */
+.cover-snake-sprite {
+  background: linear-gradient(135deg, #003a2a, #0a0a18);
+}
+.cover-snake-sprite::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/games/snake/fruits.png');
+  background-size: cover;
+  background-position: center 40%;
+  opacity: 0.4;
+  filter: drop-shadow(0 0 8px rgba(0, 255, 136, 0.5));
+}
+.cover-snake-sprite::before {
+  content: '▲';
+  position: absolute;
+  left: 50%;
+  top: 85%;
+  transform: translateX(-50%);
+  color: var(--yellow);
+  font-size: 18px;
+  text-shadow: 0 0 8px var(--yellow);
+}
+
 .cover-glot {
   background: radial-gradient(circle at 50% 50%, #1a002a, #0a0a18);
 }
