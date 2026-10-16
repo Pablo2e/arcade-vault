@@ -14,9 +14,130 @@ The repo pins `next@16.4.0`, which has breaking changes relative to earlier vers
 - **Caching** — `cacheComponents: true` in `next.config.ts` enables Next 16's new caching model (alongside `partialPrefetching`). Read `node_modules/next/dist/docs/01-app/01-getting-started/08-caching.md` before writing data fetching or anything cache-related; the classic caching behavior is not the default here.
 - **Tailwind CSS v4** — no `tailwind.config.*`; styling is CSS-first via `@import "tailwindcss"` and `@theme` in `app/globals.css`, wired into Turbopack through the `turbopack.rules` entry in `next.config.ts`.
 
+## Routes and Pages
+
+- `/` — Landing page with featured games preview
+- `/jugar/:id` — Individual game pages (e.g., `/jugar/asteroides`, `/jugar/tetris`)
+- `/jugar/` — Game catalog listing all available games (see `references/implemented-games.md`) When you need to check which games are implemented and how to implement new ones.
+- `/salon` — Multiplayer lobby (planned)
+- `/sobre-nosotros` — About us page
+- `/auth` — Authentication page
+- `/api/*` — API routes:
+  - `/api/contact` — Contact form handler
+  - `/api/player-best` — Player best scores endpoint
+  - `/api/supabase-health` — Supabase connection health check
+
+## Implemented Games
+
+1. **Asteroides** (`/jugar/asteroides`) — Classic Asteroids game with ship physics, asteroids splitting, UFOs, hyperspace, particle effects, and high score persistence
+2. **Tetris** (`/jugar/tetris`) — 7-piece Tetris (I, J, L, O, S, T, Z) with ghost piece, hold, next queue, level progression, line clears, and Supabase leaderboard
+3. **Arkanoid** (`/jugar/arkanoid`) — Breakout-style game with paddle, ball physics, brick patterns, power-ups (expand, multi-ball, laser, slow, catch, life), particles, and combo scoring
+4. **Snake** (`/jugar/snake`) — Classic snake with growing body, food spawning, collision detection, speed progression, and leaderboard integration
+
+## Shared Game Architecture
+
+- **PlayableEngine** (`lib/engine.ts`) — Abstract base class for deterministic game engines with fixed timestep (60 FPS), input handling, state management
+  - Defines the contract all game engines must follow: `update()`, `draw()`, `input()`, `pointer?()`, `restart()`, `endGame()`, `getSnapshot()`
+  - Uses `GameSnapshot` type for minimal state reporting (score, lives, level, over, extra)
+  - Pure TypeScript module with no DOM or React dependencies
+- **GameShell** (`components/GameShell.tsx`) — Universal React wrapper providing:
+  - Canvas rendering with proper sizing and scaling
+  - Keyboard input handling mapped to game engine
+  - Pause/resume functionality
+  - HUD displaying score, lives, level and custom stats
+  - Game-over overlay with restart button
+  - Mobile touch controls support
+- **useGameEngine** (`lib/useGameEngine.ts`) — React hook bridging engine lifecycle with React:
+  - Manages engine start/stop/reset lifecycle
+  - Synchronizes engine snapshots with React state using requestAnimationFrame
+  - Provides startGame(), stopGame(), resetGame() functions
+  - Returns current game state and control functions
+- **Game Catalog** (`lib/games.ts`) — Central registry with metadata:
+  - Game ID, title, description (short/long), thumbnail route
+  - Tags, difficulty level, engine factory function
+  - Route path for navigation
+  - Used by home page and game catalog
+
+## Supabase Integration
+
+- **Database** — PostgreSQL with Row Level Security (RLS) enabled
+- **Tables**:
+  - `av_games` — Game catalog (id, title, short/long descriptions, category, cover, color, sort)
+  - `av_scores` — Player scores (game FK, name, score, created_at)
+- **Views** (with `security_invoker = true`):
+  - `av_game_best` — Best score per (game, player), excludes 'INVITADO'
+  - `av_game_metrics` — Aggregated best score and play count per game
+  - `av_global_ranking` — Global ranking by sum of best scores per player
+- **RLS Policies** — Public read on both tables; anonymous insert on scores only
+- **Migrations** — 6 migration files in `supabase/migrations/`:
+  - `0001_av_games_scores.sql` — Base schema + initial placeholder games
+  - `0002_av_game_tetris.sql` — Added Tetris (sort 9)
+  - `0003_remove_mock_games.sql` — Removed placeholder games
+  - `0004_av_game_arkanoid.sql` — Added Arkanoid (sort 10)
+  - `0005_av_game_snake.sql` — Added Snake (sort 11)
+  - `0006_av_game_asteroides.sql` — Updated Asteroides details
+- **Server Client** — `lib/supabase/server.ts` — Singleton Supabase client for Server Components/Actions
+- **Data Access Layer** — `lib/games.ts` with typed functions:
+  - `getGames()` — Get all games ordered by sort
+  - `getGame(id)` — Get specific game by ID
+  - `getGameMetrics(id)` — Get plays and best score for a game
+  - `getGameRanking(id, limit)` — Get top players for a specific game
+  - `getGlobalRanking(limit)` — Get global player ranking
+  - `getPlayerBest(id, name)` — Get specific player's best score for a game
+  - `submitScore(gameId, playerName, score)` — Submit a new score
+
 ## Spec Driven Design workflow
 
 Per README.md, development follows Spec Driven Design via the `/spec` and `/spec-impl` skills from Klerith/fernando-skills. If they aren't available in the session, install with `npx skills@latest add Klerith/fernando-skills`.
 
-## Skills
-Usa siempre /frontend-design para diseñar la interfaz de usuario
+## Game Development Process
+
+1. Create specification using `/spec` skill
+2. Implement game engine following `PlayableEngine` contract
+3. Create game page using `GameShell` and `useGameEngine`
+4. Add game to `lib/games.ts` catalog
+5. Add Supabase migration for the new game
+6. Update CLAUDE.md with new game information
+
+## Component Library
+
+- `components/` — Shared React components:
+  - `GameShell.tsx` — Universal game container
+  - `Nav.tsx` — Navigation menu
+  - `SessionProvider.tsx` — Supabase session context
+  - `Home.tsx` — Landing page with game previews
+  - `GamesPage.tsx` — Game catalog listing
+  - `AboutPage.tsx` — About us page
+  - `ContactForm.tsx` — Contact form component
+  - `Footer.tsx` — Site footer
+
+## Styling Approach
+
+- Tailwind CSS v4 via `@import "tailwindcss"` in `app/globals.css`
+- Custom theme via `@theme` directive in globals.css
+- CSS variables defined in globals.css for colors, fonts, spacing
+- No tailwind.config.js — all configuration in CSS
+- Dark/light mode handled via CSS prefers-color-scheme media queries
+
+## Development Commands
+
+- `npm run dev` — Start development server with Turbopack
+- `npm run build` — Build for production
+- `npm start` — Start production server
+- `npm run lint` — Run ESLint
+- `npx prisma studio` — View Supabase data (if using Prisma)
+
+## Testing
+
+- Unit tests: Jest with React Testing Library
+- E2E tests: Playground (configured in playwright.config.ts)
+- Game-specific tests: Manual verification of game mechanics
+
+## Contributing Guidelines
+
+1. Follow Spec Driven Design process for new features
+2. Keep game engines pure (no DOM/React dependencies)
+3. Use shared components from `components/` when possible
+4. Add/update Supabase migrations for database changes
+5. Update CLAUDE.md with new implementation details
+6. Write clear commit messages with conventional commits format
